@@ -1,0 +1,58 @@
+version: '3.9'
+
+# ======> READ THIS FIRST <======
+# You have two options for the config file:
+# Option 1 => You can map to the default path in docker [/app/config/config.yaml] and run the app without the --config flag
+# Option 2 => You can map to a custom path in docker but you must run the app with the --config flag
+
+services:
+  api:
+    build: .
+    image: go-grpc-boilerplate:latest
+    restart: on-failure:10
+    command: [ "serve-api", "--config=/config/config.yaml" ]
+    volumes:
+      - ./config/config.yaml:/config/config.yaml
+    ports:
+      - 8082:8082
+    depends_on:
+      - postgres
+      - migrate
+
+  scheduler:
+    build: .
+    image: go-grpc-boilerplate:latest
+    restart: on-failure:10
+    command: [ "schedule:run", "--config=/config/config.yaml" ]
+    volumes:
+      - ./config/config.yaml:/config/config.yaml
+    depends_on:
+      - postgres
+      - migrate
+
+  migrate:
+    build: .
+    image: go-grpc-boilerplate:latest
+    restart: on-failure:10
+    command: [ "migrate", "--config=/config/config.yaml" ]
+    volumes:
+      - ./config/config.yaml:/config/config.yaml
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:14.6-alpine3.17
+    restart: on-failure
+    volumes:
+      - ../tmp/postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: my_user
+      POSTGRES_PASSWORD: my_password
+      POSTGRES_DB: my_db
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "my_user", "-d", "my_db" ]
+      interval: 5s
+      timeout: 5s
+      retries: 20

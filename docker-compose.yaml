@@ -1,0 +1,32 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:14.6-alpine3.17
+    restart: on-failure
+    volumes:
+      - ../tmp/postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: my_user
+      POSTGRES_PASSWORD: my_password
+      POSTGRES_DB: my_db
+    ports:
+      - 54322:5432
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "my_user", "-d", "my_db" ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:6.2.6-alpine3.14
+    restart: on-failure
+    volumes:
+      - ../tmp/redis:/data
+    ports:
+      - 63799:6379
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 20

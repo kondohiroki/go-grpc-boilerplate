@@ -1,0 +1,36 @@
+package migrations
+
+import (
+	"context"
+
+	"github.com/kondohiroki/go-grpc-boilerplate/internal/db/pgx"
+)
+
+func init() {
+	Migrations = append(Migrations, <migration_name>)
+}
+
+var <migration_name> = &Migration{
+	Name: "<filename>",
+	Up: func() error {
+		_, err := pgx.GetPgxPool().Exec(context.Background(), `
+			// code here
+		`)
+
+		if err != nil {
+			return err
+		}
+		return nil
+
+	},
+	Down: func() error {
+		_, err := pgx.GetPgxPool().Exec(context.Background(), `
+			// code here
+		`)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	},
+}
