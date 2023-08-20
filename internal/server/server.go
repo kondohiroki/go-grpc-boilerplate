@@ -15,10 +15,17 @@ import (
 
 type Server struct {
 	pb.UsersServer
-	// Add more gRPC services here
+
+	// Add more services here
 }
 
-func NewgRPCServer() (*grpc.Server, error) {
+func (s *Server) RegisterWithServer(sv *grpc.Server) {
+	pb.RegisterUsersServer(sv, s)
+
+	// Register more services here
+}
+
+func NewGRPCServer() (*grpc.Server, error) {
 	// Register interceptors here
 	opts := []grpc.ServerOption{
 		grpc.ChainUnaryInterceptor(
@@ -35,8 +42,9 @@ func NewgRPCServer() (*grpc.Server, error) {
 	// Register health check service
 	grpc_health_v1.RegisterHealthServer(s, health.NewServer())
 
-	// Register the gRPC server and more gRPC services here
-	pb.RegisterUsersServer(s, &Server{})
+	// Initialize and register the combined gRPC server struct
+	serverInstance := &Server{}
+	serverInstance.RegisterWithServer(s)
 
 	// Register the reflection service on gRPC server.
 	reflection.Register(s)

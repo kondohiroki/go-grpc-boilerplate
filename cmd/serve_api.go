@@ -17,10 +17,10 @@ import (
 
 func init() {
 	rootCmd.AddGroup(&cobra.Group{ID: "serve", Title: "Serve:"})
-	rootCmd.AddCommand(servegRPCAPICmd)
+	rootCmd.AddCommand(serveGRPCAPICmd)
 }
 
-var servegRPCAPICmd = &cobra.Command{
+var serveGRPCAPICmd = &cobra.Command{
 	Use:     "serve:grpc-api",
 	Short:   "Start the gRPC API",
 	GroupID: "serve",
@@ -29,7 +29,7 @@ var servegRPCAPICmd = &cobra.Command{
 		setupAll()
 
 		// Create gRPC server
-		gRPCServer, err := server.NewgRPCServer()
+		gRPCServer, err := server.NewGRPCServer()
 		if err != nil {
 			return fmt.Errorf("failed to create gRPC server: %w", err)
 		}
