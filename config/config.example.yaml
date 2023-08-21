@@ -1,9 +1,9 @@
 env: "dev" # dev, staging, production
 
 app:
-  key: "my-app-key"
-  name: "My App"
-  nameSlug: "my-app"
+  key: "Z28tZ3JwYy1ib2lsZXJwbGF0ZQ=="
+  name: "Go gRPC Boilerplate"
+  nameSlug: "go-grpc-boilerplate"
 
 grpcServer:
   port: 50051
