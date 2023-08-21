@@ -1,5 +1,3 @@
-env: "dev" # dev, staging, production
-
 app:
   key: "Z28tZ3JwYy1ib2lsZXJwbGF0ZQ=="
   name: "Go gRPC Boilerplate"
@@ -13,13 +11,6 @@ grpcServer:
   useTls: false
   tlsCertFile: "certs/server.crt"
   tlsKeyFile: "certs/server.key"
-
-grpcClient:
-  - name: "grpc-endpoint-1"
-    host: "localhost"
-    port: 50051
-    useTls: false
-    tlsCertFile: "certs/server.crt" # should be CA cert file
 
 log:
   level: "debug"

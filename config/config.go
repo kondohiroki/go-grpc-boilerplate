@@ -12,7 +12,6 @@ var config *Config
 var m sync.Mutex
 
 type Config struct {
-	Env        string     `yaml:"env"`
 	App        App        `yaml:"app"`
 	GRPCServer GRPCServer `yaml:"grpcServer"`
 	Log        Log        `yaml:"log"`
