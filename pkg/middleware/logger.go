@@ -29,7 +29,7 @@ func UnaryLoggingInterceptor(logger *zap.Logger) grpc.UnaryServerInterceptor {
 		resp, err := handler(ctx, req)
 
 		// Log details
-		logger.Info("unary request",
+		logger.Info("Received request",
 			zap.String("protocol", "grpc"),
 			zap.String("service", serviceName),
 			zap.String("method", methodName),
@@ -64,7 +64,7 @@ func StreamLoggingInterceptor(logger *zap.Logger) grpc.StreamServerInterceptor {
 		err := handler(srv, stream)
 
 		// Log details
-		logger.Info("stream request",
+		logger.Info("Received request",
 			zap.String("protocol", "grpc"),
 			zap.String("service", serviceName),
 			zap.String("method", methodName),
