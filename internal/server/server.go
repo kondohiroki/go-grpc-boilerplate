@@ -32,6 +32,7 @@ func initOptions() []grpc.ServerOption {
 			middleware.UnaryRecoveryInterceptor(logger.Log),
 		),
 		grpc.ChainStreamInterceptor(
+			middleware.StreamRequestIDInterceptor,
 			middleware.StreamLoggingInterceptor(logger.Log),
 			middleware.StreamRecoveryInterceptor(logger.Log),
 		),
