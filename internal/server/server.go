@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/kondohiroki/go-grpc-boilerplate/config"
 	"github.com/kondohiroki/go-grpc-boilerplate/internal/logger"
 	"github.com/kondohiroki/go-grpc-boilerplate/pkg/middleware"
 	pb "github.com/kondohiroki/go-grpc-boilerplate/proto"
@@ -44,15 +45,20 @@ func NewGRPCServer() (*grpc.Server, error) {
 	// Create a new gRPC server with the interceptors
 	s := grpc.NewServer(opts...)
 
-	// Register health check service
-	grpc_health_v1.RegisterHealthServer(s, health.NewServer())
-
 	// Initialize and register the combined gRPC server struct
 	serverInstance := &Server{}
 	serverInstance.registerWithServer(s)
 
+	// Register health check service
+	healthServer := health.NewServer()
+	healthServer.SetServingStatus(config.GetConfig().App.NameSlug, grpc_health_v1.HealthCheckResponse_SERVING)
+	grpc_health_v1.RegisterHealthServer(s, healthServer)
+
 	// Register the reflection service on gRPC server.
-	reflection.Register(s)
+	if config.GetConfig().GRPCServer.Reflection {
+		logger.Log.Info("Register reflection service")
+		reflection.Register(s)
+	}
 
 	return s, nil
 }
