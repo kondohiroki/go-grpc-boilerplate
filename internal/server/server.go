@@ -1,17 +1,13 @@
 package server
 
 import (
-	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
 	"github.com/kondohiroki/go-grpc-boilerplate/internal/logger"
 	"github.com/kondohiroki/go-grpc-boilerplate/pkg/middleware"
 	pb "github.com/kondohiroki/go-grpc-boilerplate/proto"
-	"go.uber.org/zap"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/health"
 	"google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
-	"google.golang.org/grpc/status"
 )
 
 type Server struct {
@@ -30,13 +26,13 @@ func (s *Server) registerWithServer(sv *grpc.Server) {
 func initOptions() []grpc.ServerOption {
 	return []grpc.ServerOption{
 		grpc.ChainUnaryInterceptor(
-			grpc.UnaryServerInterceptor(middleware.UnaryRequestIDInterceptor),
-			recovery.UnaryServerInterceptor(recovery.WithRecoveryHandler(grpcPanicRecoveryHandler)),
-			grpc.UnaryServerInterceptor(middleware.UnaryLoggingInterceptor(logger.Log)),
+			middleware.UnaryRequestIDInterceptor,
+			middleware.UnaryLoggingInterceptor(logger.Log),
+			middleware.UnaryRecoveryInterceptor(logger.Log),
 		),
 		grpc.ChainStreamInterceptor(
-			recovery.StreamServerInterceptor(recovery.WithRecoveryHandler(grpcPanicRecoveryHandler)),
-			grpc.StreamServerInterceptor(middleware.StreamLoggingInterceptor(logger.Log)),
+			middleware.StreamLoggingInterceptor(logger.Log),
+			middleware.StreamRecoveryInterceptor(logger.Log),
 		),
 	}
 }
@@ -59,10 +55,4 @@ func NewGRPCServer() (*grpc.Server, error) {
 	reflection.Register(s)
 
 	return s, nil
-}
-
-// Custom recovery function to handle panics
-func grpcPanicRecoveryHandler(p interface{}) (err error) {
-	logger.Log.Error("Unexpected panic occurred", zap.Any("panic", p))
-	return status.Errorf(codes.Internal, "Unexpected error occurred")
 }

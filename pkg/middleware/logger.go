@@ -2,10 +2,13 @@ package middleware
 
 import (
 	"context"
+	"net"
+	"strings"
 	"time"
 
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/peer"
 )
 
 func UnaryLoggingInterceptor(logger *zap.Logger) grpc.UnaryServerInterceptor {
@@ -15,12 +18,23 @@ func UnaryLoggingInterceptor(logger *zap.Logger) grpc.UnaryServerInterceptor {
 		// Get requestID from context
 		requestID := getRequestIDFromContext(ctx)
 
+		// Get client IP
+		clientIP := getClientIP(ctx)
+
+		// Extract method and service name
+		methodName := getMethodName(info.FullMethod)
+		serviceName := getServiceName(info.FullMethod)
+
 		// Proceed with the original request
 		resp, err := handler(ctx, req)
 
 		// Log details
-		logger.Info(info.FullMethod,
-			zap.String("method", info.FullMethod),
+		logger.Info("unary request",
+			zap.String("protocol", "grpc"),
+			zap.String("service", serviceName),
+			zap.String("method", methodName),
+			zap.String("method_type", "unary"),
+			zap.String("ip", clientIP),
 			zap.String("x-request-id", requestID),
 			zap.Duration("duration", time.Since(startTime)),
 			zap.Any("request", req),
@@ -36,19 +50,26 @@ func StreamLoggingInterceptor(logger *zap.Logger) grpc.StreamServerInterceptor {
 	return func(srv interface{}, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 		startTime := time.Now()
 
-		// This will not capture the actual request & response objects in streaming, as they're handled inside the handler.
-		// To log those, you'd need more complex code to wrap the stream and capture each message.
-		// Here we're just logging the method, id, and timings.
-
 		// Get requestID from wrapped context of stream
 		requestID := getRequestIDFromContext(stream.Context())
+
+		// Get client IP
+		clientIP := getClientIP(stream.Context())
+
+		// Extract method and service name
+		methodName := getMethodName(info.FullMethod)
+		serviceName := getServiceName(info.FullMethod)
 
 		// Proceed with the original request
 		err := handler(srv, stream)
 
 		// Log details
-		logger.Info(info.FullMethod,
-			zap.String("method", info.FullMethod),
+		logger.Info("stream request",
+			zap.String("protocol", "grpc"),
+			zap.String("service", serviceName),
+			zap.String("method", methodName),
+			zap.String("method_type", "stream"),
+			zap.String("ip", clientIP),
 			zap.String("x-request-id", requestID),
 			zap.Bool("client_streaming", info.IsClientStream),
 			zap.Bool("server_streaming", info.IsServerStream),
@@ -58,4 +79,31 @@ func StreamLoggingInterceptor(logger *zap.Logger) grpc.StreamServerInterceptor {
 
 		return err
 	}
+}
+
+func getClientIP(ctx context.Context) string {
+	if p, ok := peer.FromContext(ctx); ok {
+		if addr, ok := p.Addr.(*net.TCPAddr); ok {
+			return addr.IP.String()
+		}
+	}
+	return ""
+}
+
+func getMethodName(fullMethod string) string {
+	parts := strings.Split(fullMethod, "/")
+	if len(parts) > 0 {
+		return parts[len(parts)-1]
+	}
+	return fullMethod
+}
+
+func getServiceName(fullMethod string) string {
+	parts := strings.Split(fullMethod, "/")
+	if len(parts) > 1 {
+		// Further split to account for the package.ServiceName format
+		subParts := strings.Split(parts[len(parts)-2], ".")
+		return subParts[len(subParts)-1] // Return the last segment which is the service name
+	}
+	return ""
 }
