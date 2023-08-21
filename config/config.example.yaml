@@ -43,7 +43,7 @@ postgres:
 
 Redis:
   - host: "localhost"
-    port: 63791
+    port: 63799
     password: ""
     db: 0
 

@@ -36,7 +36,7 @@ func UnaryLoggingInterceptor(logger *zap.Logger) grpc.UnaryServerInterceptor {
 			zap.String("method_type", "unary"),
 			zap.String("ip", clientIP),
 			zap.String("x-request-id", requestID),
-			zap.Duration("duration", time.Since(startTime)),
+			zap.String("duration", time.Since(startTime).String()),
 			zap.Any("request", req),
 			zap.Any("response", resp),
 			// Any other metadata you'd like to log
@@ -73,7 +73,7 @@ func StreamLoggingInterceptor(logger *zap.Logger) grpc.StreamServerInterceptor {
 			zap.String("x-request-id", requestID),
 			zap.Bool("client_streaming", info.IsClientStream),
 			zap.Bool("server_streaming", info.IsServerStream),
-			zap.Duration("duration", time.Since(startTime)),
+			zap.String("duration", time.Since(startTime).String()),
 			// Any other metadata you'd like to log
 		)
 
