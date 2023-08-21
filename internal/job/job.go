@@ -24,8 +24,7 @@ type Job struct {
 }
 
 // NewJob creates a new Job with the given queue name and payload.
-func NewJob(handlerName string, payload any, maxAttempts int, delay int) (*Job, error) {
-	jobID := uuid.New()
+func NewJob(jobID uuid.UUID, handlerName string, payload any, maxAttempts int, delay int) (*Job, error) {
 	createdAt := time.Now()
 
 	payloadBytes, err := json.Marshal(payload)

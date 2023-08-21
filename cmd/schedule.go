@@ -18,6 +18,7 @@ func init() {
 	)
 }
 
+var scheduleCommands map[string]*cobra.Command
 var startScheduleCommand = &cobra.Command{
 	Use:     "schedule:run",
 	Short:   "Start schedule job",
@@ -28,9 +29,13 @@ var startScheduleCommand = &cobra.Command{
 		setUpPostgres()
 		setUpRedis()
 	},
-	Run: func(_ *cobra.Command, _ []string) {
+	Run: func(cmd *cobra.Command, _ []string) {
 		printScheduleList()
-		scheduler.Start()
+		printScheduleList()
+
+		scheduleCommands = map[string]*cobra.Command{}
+
+		scheduler.Start(cmd, scheduleCommands)
 	},
 }
 

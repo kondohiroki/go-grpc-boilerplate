@@ -308,6 +308,7 @@ var queueRestoreCommand = &cobra.Command{
 
 		for _, j := range unfinishedJobs {
 			jobItem, err := job.NewJob(
+				j.ID,
 				j.HandlerName,
 				j.Payload,
 				j.MaxAttempts,
