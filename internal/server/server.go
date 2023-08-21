@@ -23,9 +23,16 @@ func (s *Server) registerWithServer(sv *grpc.Server) {
 	// Register more services here
 }
 
-// Register interceptors (i.e. middleware) here
+// initOptions initializes the gRPC server options
 func initOptions() []grpc.ServerOption {
+	maxSendSize := config.GetConfig().GRPCServer.MaxSendMsgSize * 1024 * 1024 // Convert MB to bytes
+	maxRecvSize := config.GetConfig().GRPCServer.MaxRecvMsgSize * 1024 * 1024 // Convert MB to bytes
+
 	return []grpc.ServerOption{
+		grpc.MaxSendMsgSize(maxSendSize),
+		grpc.MaxRecvMsgSize(maxRecvSize),
+
+		// Register interceptors here
 		grpc.ChainUnaryInterceptor(
 			middleware.UnaryRequestIDInterceptor,
 			middleware.UnaryLoggingInterceptor(logger.Log),

@@ -24,11 +24,13 @@ type Config struct {
 }
 
 type GRPCServer struct {
-	Port        int    `yaml:"port"`
-	Reflection  bool   `yaml:"reflection"`
-	UseTls      bool   `yaml:"useTls"`
-	TlsCertFile string `yaml:"tlsCertFile"`
-	TlsKeyFile  string `yaml:"tlsKeyFile"`
+	Port           int    `yaml:"port"`
+	Reflection     bool   `yaml:"reflection"`
+	MaxSendMsgSize int    `yaml:"maxSendMsgSize"` // in MB
+	MaxRecvMsgSize int    `yaml:"maxRecvMsgSize"` // in MB
+	UseTls         bool   `yaml:"useTls"`
+	TlsCertFile    string `yaml:"tlsCertFile"`
+	TlsKeyFile     string `yaml:"tlsKeyFile"`
 }
 
 type Log struct {
