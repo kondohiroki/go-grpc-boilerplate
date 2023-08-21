@@ -6,15 +6,15 @@ import "common.proto";
 
 option go_package = "github.com/kondohiroki/go-grpc-boilerplate/proto";
 
-service Users {
-  rpc GetUser (GetUserReq) returns (GetUserReply) {}
-  rpc GetUserList (GetUserReq) returns (GetUserListReply) {}
-  rpc GetUserPagination (GetUserReq) returns (GetUserPaginationReply) {}
-  rpc GetGrpcError (GetUserReq) returns (GetUserReply) {}
+service UserService {
+  rpc GetUser (GetUserRequest) returns (GetUserResponse) {}
+  rpc GetUserList (GetUserRequest) returns (GetUserListResponse) {}
+  rpc GetUserPagination (GetUserRequest) returns (GetUserPaginationResponse) {}
+  rpc GetGrpcError (GetUserRequest) returns (GetUserResponse) {}
 }
 
 
-message GetUserReq {
+message GetUserRequest {
   string email = 1;
   string id = 2;
 }
@@ -25,18 +25,18 @@ message User {
   int32 point = 10;
 }
 
-message GetUserReply {
+message GetUserResponse {
   Status status = 1;
   optional User data = 2;
   // repeated common.Error errors = 20;
 }
 
-message GetUserListReply {
+message GetUserListResponse {
   // common.Status status = 1;
   repeated User data = 2;
 }
 
-message GetUserPaginationReply {
+message GetUserPaginationResponse {
   // common.Status status = 1;
   repeated User data = 2;
   // optional common.Pagination pagination = 3;

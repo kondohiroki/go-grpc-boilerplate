@@ -19,200 +19,200 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Users_GetUser_FullMethodName           = "/go_grpc_boilerplate.proto.Users/GetUser"
-	Users_GetUserList_FullMethodName       = "/go_grpc_boilerplate.proto.Users/GetUserList"
-	Users_GetUserPagination_FullMethodName = "/go_grpc_boilerplate.proto.Users/GetUserPagination"
-	Users_GetGrpcError_FullMethodName      = "/go_grpc_boilerplate.proto.Users/GetGrpcError"
+	UserService_GetUser_FullMethodName           = "/go_grpc_boilerplate.proto.UserService/GetUser"
+	UserService_GetUserList_FullMethodName       = "/go_grpc_boilerplate.proto.UserService/GetUserList"
+	UserService_GetUserPagination_FullMethodName = "/go_grpc_boilerplate.proto.UserService/GetUserPagination"
+	UserService_GetGrpcError_FullMethodName      = "/go_grpc_boilerplate.proto.UserService/GetGrpcError"
 )
 
-// UsersClient is the client API for Users service.
+// UserServiceClient is the client API for UserService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type UsersClient interface {
-	GetUser(ctx context.Context, in *GetUserReq, opts ...grpc.CallOption) (*GetUserReply, error)
-	GetUserList(ctx context.Context, in *GetUserReq, opts ...grpc.CallOption) (*GetUserListReply, error)
-	GetUserPagination(ctx context.Context, in *GetUserReq, opts ...grpc.CallOption) (*GetUserPaginationReply, error)
-	GetGrpcError(ctx context.Context, in *GetUserReq, opts ...grpc.CallOption) (*GetUserReply, error)
+type UserServiceClient interface {
+	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
+	GetUserList(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserListResponse, error)
+	GetUserPagination(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserPaginationResponse, error)
+	GetGrpcError(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 }
 
-type usersClient struct {
+type userServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewUsersClient(cc grpc.ClientConnInterface) UsersClient {
-	return &usersClient{cc}
+func NewUserServiceClient(cc grpc.ClientConnInterface) UserServiceClient {
+	return &userServiceClient{cc}
 }
 
-func (c *usersClient) GetUser(ctx context.Context, in *GetUserReq, opts ...grpc.CallOption) (*GetUserReply, error) {
-	out := new(GetUserReply)
-	err := c.cc.Invoke(ctx, Users_GetUser_FullMethodName, in, out, opts...)
+func (c *userServiceClient) GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error) {
+	out := new(GetUserResponse)
+	err := c.cc.Invoke(ctx, UserService_GetUser_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *usersClient) GetUserList(ctx context.Context, in *GetUserReq, opts ...grpc.CallOption) (*GetUserListReply, error) {
-	out := new(GetUserListReply)
-	err := c.cc.Invoke(ctx, Users_GetUserList_FullMethodName, in, out, opts...)
+func (c *userServiceClient) GetUserList(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserListResponse, error) {
+	out := new(GetUserListResponse)
+	err := c.cc.Invoke(ctx, UserService_GetUserList_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *usersClient) GetUserPagination(ctx context.Context, in *GetUserReq, opts ...grpc.CallOption) (*GetUserPaginationReply, error) {
-	out := new(GetUserPaginationReply)
-	err := c.cc.Invoke(ctx, Users_GetUserPagination_FullMethodName, in, out, opts...)
+func (c *userServiceClient) GetUserPagination(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserPaginationResponse, error) {
+	out := new(GetUserPaginationResponse)
+	err := c.cc.Invoke(ctx, UserService_GetUserPagination_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *usersClient) GetGrpcError(ctx context.Context, in *GetUserReq, opts ...grpc.CallOption) (*GetUserReply, error) {
-	out := new(GetUserReply)
-	err := c.cc.Invoke(ctx, Users_GetGrpcError_FullMethodName, in, out, opts...)
+func (c *userServiceClient) GetGrpcError(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error) {
+	out := new(GetUserResponse)
+	err := c.cc.Invoke(ctx, UserService_GetGrpcError_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// UsersServer is the server API for Users service.
-// All implementations must embed UnimplementedUsersServer
+// UserServiceServer is the server API for UserService service.
+// All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
-type UsersServer interface {
-	GetUser(context.Context, *GetUserReq) (*GetUserReply, error)
-	GetUserList(context.Context, *GetUserReq) (*GetUserListReply, error)
-	GetUserPagination(context.Context, *GetUserReq) (*GetUserPaginationReply, error)
-	GetGrpcError(context.Context, *GetUserReq) (*GetUserReply, error)
-	mustEmbedUnimplementedUsersServer()
+type UserServiceServer interface {
+	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
+	GetUserList(context.Context, *GetUserRequest) (*GetUserListResponse, error)
+	GetUserPagination(context.Context, *GetUserRequest) (*GetUserPaginationResponse, error)
+	GetGrpcError(context.Context, *GetUserRequest) (*GetUserResponse, error)
+	mustEmbedUnimplementedUserServiceServer()
 }
 
-// UnimplementedUsersServer must be embedded to have forward compatible implementations.
-type UnimplementedUsersServer struct {
+// UnimplementedUserServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedUserServiceServer struct {
 }
 
-func (UnimplementedUsersServer) GetUser(context.Context, *GetUserReq) (*GetUserReply, error) {
+func (UnimplementedUserServiceServer) GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
 }
-func (UnimplementedUsersServer) GetUserList(context.Context, *GetUserReq) (*GetUserListReply, error) {
+func (UnimplementedUserServiceServer) GetUserList(context.Context, *GetUserRequest) (*GetUserListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserList not implemented")
 }
-func (UnimplementedUsersServer) GetUserPagination(context.Context, *GetUserReq) (*GetUserPaginationReply, error) {
+func (UnimplementedUserServiceServer) GetUserPagination(context.Context, *GetUserRequest) (*GetUserPaginationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserPagination not implemented")
 }
-func (UnimplementedUsersServer) GetGrpcError(context.Context, *GetUserReq) (*GetUserReply, error) {
+func (UnimplementedUserServiceServer) GetGrpcError(context.Context, *GetUserRequest) (*GetUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetGrpcError not implemented")
 }
-func (UnimplementedUsersServer) mustEmbedUnimplementedUsersServer() {}
+func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
-// UnsafeUsersServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to UsersServer will
+// UnsafeUserServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to UserServiceServer will
 // result in compilation errors.
-type UnsafeUsersServer interface {
-	mustEmbedUnimplementedUsersServer()
+type UnsafeUserServiceServer interface {
+	mustEmbedUnimplementedUserServiceServer()
 }
 
-func RegisterUsersServer(s grpc.ServiceRegistrar, srv UsersServer) {
-	s.RegisterService(&Users_ServiceDesc, srv)
+func RegisterUserServiceServer(s grpc.ServiceRegistrar, srv UserServiceServer) {
+	s.RegisterService(&UserService_ServiceDesc, srv)
 }
 
-func _Users_GetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserReq)
+func _UserService_GetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UsersServer).GetUser(ctx, in)
+		return srv.(UserServiceServer).GetUser(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Users_GetUser_FullMethodName,
+		FullMethod: UserService_GetUser_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UsersServer).GetUser(ctx, req.(*GetUserReq))
+		return srv.(UserServiceServer).GetUser(ctx, req.(*GetUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Users_GetUserList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserReq)
+func _UserService_GetUserList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UsersServer).GetUserList(ctx, in)
+		return srv.(UserServiceServer).GetUserList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Users_GetUserList_FullMethodName,
+		FullMethod: UserService_GetUserList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UsersServer).GetUserList(ctx, req.(*GetUserReq))
+		return srv.(UserServiceServer).GetUserList(ctx, req.(*GetUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Users_GetUserPagination_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserReq)
+func _UserService_GetUserPagination_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UsersServer).GetUserPagination(ctx, in)
+		return srv.(UserServiceServer).GetUserPagination(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Users_GetUserPagination_FullMethodName,
+		FullMethod: UserService_GetUserPagination_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UsersServer).GetUserPagination(ctx, req.(*GetUserReq))
+		return srv.(UserServiceServer).GetUserPagination(ctx, req.(*GetUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Users_GetGrpcError_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserReq)
+func _UserService_GetGrpcError_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UsersServer).GetGrpcError(ctx, in)
+		return srv.(UserServiceServer).GetGrpcError(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Users_GetGrpcError_FullMethodName,
+		FullMethod: UserService_GetGrpcError_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UsersServer).GetGrpcError(ctx, req.(*GetUserReq))
+		return srv.(UserServiceServer).GetGrpcError(ctx, req.(*GetUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Users_ServiceDesc is the grpc.ServiceDesc for Users service.
+// UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Users_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "go_grpc_boilerplate.proto.Users",
-	HandlerType: (*UsersServer)(nil),
+var UserService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "go_grpc_boilerplate.proto.UserService",
+	HandlerType: (*UserServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "GetUser",
-			Handler:    _Users_GetUser_Handler,
+			Handler:    _UserService_GetUser_Handler,
 		},
 		{
 			MethodName: "GetUserList",
-			Handler:    _Users_GetUserList_Handler,
+			Handler:    _UserService_GetUserList_Handler,
 		},
 		{
 			MethodName: "GetUserPagination",
-			Handler:    _Users_GetUserPagination_Handler,
+			Handler:    _UserService_GetUserPagination_Handler,
 		},
 		{
 			MethodName: "GetGrpcError",
-			Handler:    _Users_GetGrpcError_Handler,
+			Handler:    _UserService_GetGrpcError_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

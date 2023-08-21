@@ -3,6 +3,7 @@ package server
 import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
 	"github.com/kondohiroki/go-grpc-boilerplate/internal/logger"
+	"github.com/kondohiroki/go-grpc-boilerplate/pkg/middleware"
 	pb "github.com/kondohiroki/go-grpc-boilerplate/proto"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -14,13 +15,13 @@ import (
 )
 
 type Server struct {
-	pb.UsersServer
+	pb.UserServiceServer
 
 	// Add more services here
 }
 
 func (s *Server) registerWithServer(sv *grpc.Server) {
-	pb.RegisterUsersServer(sv, s)
+	pb.RegisterUserServiceServer(sv, s)
 
 	// Register more services here
 }
@@ -29,10 +30,13 @@ func (s *Server) registerWithServer(sv *grpc.Server) {
 func initOptions() []grpc.ServerOption {
 	return []grpc.ServerOption{
 		grpc.ChainUnaryInterceptor(
+			grpc.UnaryServerInterceptor(middleware.UnaryRequestIDInterceptor),
 			recovery.UnaryServerInterceptor(recovery.WithRecoveryHandler(grpcPanicRecoveryHandler)),
+			grpc.UnaryServerInterceptor(middleware.UnaryLoggingInterceptor(logger.Log)),
 		),
 		grpc.ChainStreamInterceptor(
 			recovery.StreamServerInterceptor(recovery.WithRecoveryHandler(grpcPanicRecoveryHandler)),
+			grpc.StreamServerInterceptor(middleware.StreamLoggingInterceptor(logger.Log)),
 		),
 	}
 }

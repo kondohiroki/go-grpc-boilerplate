@@ -7,12 +7,9 @@ import (
 	pb "github.com/kondohiroki/go-grpc-boilerplate/proto"
 )
 
-func (s *Server) GetUser(context.Context, *pb.GetUserReq) (*pb.GetUserReply, error) {
-
-	logger.Log.Info("GetUsers invoked")
-
+func (s *Server) GetUser(context.Context, *pb.GetUserRequest) (*pb.GetUserResponse, error) {
 	// Replace with actual logic to retrieve the user from the database.
-	return &pb.GetUserReply{
+	return &pb.GetUserResponse{
 		Status: &pb.Status{
 			Code:    0,
 			Message: "success",
@@ -25,16 +22,10 @@ func (s *Server) GetUser(context.Context, *pb.GetUserReq) (*pb.GetUserReply, err
 	}, nil
 }
 
-/*
-	GetUserList(context.Context, *pb.GetUserReq) (*pb.GetUserListReply, error)
-	GetUserPagination(context.Context, *pb.GetUserReq) (*pb.GetUserPaginationReply, error)
-	GetGrpcError(context.Context, *pb.GetUserReq) (*pb.GetUserReply, error)
-*/
-
-func (s *Server) GetUserList(context.Context, *pb.GetUserReq) (*pb.GetUserListReply, error) {
+func (s *Server) GetUserList(context.Context, *pb.GetUserRequest) (*pb.GetUserListResponse, error) {
 	logger.Log.Info("GetUserList invoked")
 
-	return &pb.GetUserListReply{
+	return &pb.GetUserListResponse{
 		Data: []*pb.User{
 			{
 				FirstName: "John",
@@ -50,10 +41,10 @@ func (s *Server) GetUserList(context.Context, *pb.GetUserReq) (*pb.GetUserListRe
 	}, nil
 }
 
-func (s *Server) GetUserPagination(context.Context, *pb.GetUserReq) (*pb.GetUserPaginationReply, error) {
+func (s *Server) GetUserPagination(context.Context, *pb.GetUserRequest) (*pb.GetUserPaginationResponse, error) {
 	logger.Log.Info("GetUserPagination invoked")
 
-	return &pb.GetUserPaginationReply{
+	return &pb.GetUserPaginationResponse{
 		Data: []*pb.User{
 			{
 				FirstName: "John",
@@ -69,10 +60,10 @@ func (s *Server) GetUserPagination(context.Context, *pb.GetUserReq) (*pb.GetUser
 	}, nil
 }
 
-// func (s *Server) GetGrpcError(context.Context, *pb.GetUserReq) (*pb.GetUserReply, error) {
+// func (s *Server) GetGrpcError(context.Context, *pb.GetUserRequest) (*pb.GetUserResponse, error) {
 // 	logger.Log.Info("GetGrpcError invoked")
 
-// 	return &pb.GetUserReply{
+// 	return &pb.GetUserResponse{
 // 		Status: &pb.Status{
 // 			Code:    100,
 // 			Message: "error",

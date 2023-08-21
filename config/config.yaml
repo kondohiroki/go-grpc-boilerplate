@@ -30,8 +30,8 @@ log:
   maxBackups: 10 # umber of log files
 
 postgres:
-  host: "" # use "host.docker.internal" if you run app inside docker container
-  port: 54321
+  host: "localhost" # use "host.docker.internal" if you run app inside docker container
+  port: 54322
   database: "my_db"
   schema: "my_schema"
   username: "my_user"
@@ -40,8 +40,8 @@ postgres:
   maxIdleConnections: 10
 
 Redis:
-  - host: ""
-    port: 63791
+  - host: "localhost"
+    port: 63799
     password: ""
     db: 0
 
