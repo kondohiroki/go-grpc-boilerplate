@@ -63,10 +63,13 @@ var queueWorkCommand = &cobra.Command{
 	Use:     "queue:work",
 	Short:   "Listen to a given queue",
 	GroupID: "queue",
+	PreRun: func(cmd *cobra.Command, _ []string) {
+		setUpConfig()
+		setUpLogger()
+		setUpPostgres()
+		setUpRedis()
+	},
 	Run: func(cmd *cobra.Command, _ []string) {
-		// Setup all the required dependencies
-		setupAll()
-
 		queueName, _ := cmd.Flags().GetString("queue")
 		numberOfWorkers, _ := cmd.Flags().GetInt("worker")
 
@@ -112,11 +115,14 @@ var queueRetryCommand = &cobra.Command{
 	Use:     "queue:retry",
 	Short:   "Retry a failed queue job",
 	GroupID: "queue",
+	PreRun: func(cmd *cobra.Command, _ []string) {
+		setUpConfig()
+		setUpLogger()
+		setUpPostgres()
+		setUpRedis()
+	},
 	Run: func(cmd *cobra.Command, _ []string) {
 		ctx := cmd.Context()
-
-		// Setup all the required dependencies
-		setupAll()
 
 		queueName, _ := cmd.Flags().GetString("queue")
 		jobID, _ := cmd.Flags().GetString("id")
@@ -154,10 +160,14 @@ var queueClearCommand = &cobra.Command{
 	Short:   "Delete all of the jobs from the specified queue",
 	GroupID: "queue",
 	Args:    cobra.MaximumNArgs(1),
+	PreRun: func(cmd *cobra.Command, _ []string) {
+		setUpConfig()
+		setUpLogger()
+		setUpPostgres()
+		setUpRedis()
+	},
 	Run: func(cmd *cobra.Command, _ []string) {
 		ctx := cmd.Context()
-		// Setup all the required dependencies
-		setupAll()
 
 		queueName, _ := cmd.Flags().GetString("queue")
 		all, _ := cmd.Flags().GetBool("all")
@@ -188,11 +198,14 @@ var queueFlushCommand = &cobra.Command{
 	Short:   "Flush all of the failed queue jobs",
 	GroupID: "queue",
 	Args:    cobra.MaximumNArgs(1),
+	PreRun: func(cmd *cobra.Command, _ []string) {
+		setUpConfig()
+		setUpLogger()
+		setUpPostgres()
+		setUpRedis()
+	},
 	Run: func(cmd *cobra.Command, _ []string) {
 		ctx := cmd.Context()
-
-		// Setup all the required dependencies
-		setupAll()
 
 		queueName, _ := cmd.Flags().GetString("queue")
 		all, _ := cmd.Flags().GetBool("all")
@@ -222,11 +235,14 @@ var queueForgetCommand = &cobra.Command{
 	Use:     "queue:forget",
 	Short:   "Delete a failed queue job",
 	GroupID: "queue",
+	PreRun: func(cmd *cobra.Command, _ []string) {
+		setUpConfig()
+		setUpLogger()
+		setUpPostgres()
+		setUpRedis()
+	},
 	Run: func(cmd *cobra.Command, _ []string) {
 		ctx := cmd.Context()
-
-		// Setup all the required dependencies
-		setupAll()
 
 		jobID, _ := cmd.Flags().GetString("id")
 
@@ -252,11 +268,14 @@ var queueRestoreCommand = &cobra.Command{
 	Use:     "queue:restore",
 	Short:   "Restore a failed and unfinished job to the redis queue",
 	GroupID: "queue",
+	PreRun: func(cmd *cobra.Command, _ []string) {
+		setUpConfig()
+		setUpLogger()
+		setUpPostgres()
+		setUpRedis()
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		ctx := cmd.Context()
-
-		// Setup all the required dependencies
-		setupAll()
 
 		queueName, _ := cmd.Flags().GetString("queue")
 		q := queue.NewQueue(queueName)

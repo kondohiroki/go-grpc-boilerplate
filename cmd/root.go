@@ -35,13 +35,6 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&configFile, "config", "", fmt.Sprintf("config file (default is %s)", defaultConfigFile))
 }
 
-func setupAll() {
-	setUpConfig()
-	setUpLogger()
-	// setUpPostgres()
-	// setUpRedis()
-}
-
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatalf("rootCmd.Execute() Error: %v", err)

@@ -24,10 +24,13 @@ var serveGRPCAPICmd = &cobra.Command{
 	Use:     "serve:grpc-api",
 	Short:   "Start the gRPC API",
 	GroupID: "serve",
+	PreRun: func(cmd *cobra.Command, _ []string) {
+		setUpConfig()
+		setUpLogger()
+		setUpPostgres()
+		setUpRedis()
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// Setup all the required dependencies
-		setupAll()
-
 		// Create gRPC server
 		gRPCServer, err := server.NewGRPCServer()
 		if err != nil {

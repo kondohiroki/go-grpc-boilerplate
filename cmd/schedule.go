@@ -22,10 +22,13 @@ var startScheduleCommand = &cobra.Command{
 	Use:     "schedule:run",
 	Short:   "Start schedule job",
 	GroupID: "schedule",
+	PreRun: func(cmd *cobra.Command, _ []string) {
+		setUpConfig()
+		setUpLogger()
+		setUpPostgres()
+		setUpRedis()
+	},
 	Run: func(_ *cobra.Command, _ []string) {
-		// Setup all the required dependencies
-		setupAll()
-
 		printScheduleList()
 		scheduler.Start()
 	},
@@ -35,13 +38,12 @@ var listScheduleCommand = &cobra.Command{
 	Use:     "schedule:list",
 	Short:   "List all schedule jobs",
 	GroupID: "schedule",
-	Run: func(_ *cobra.Command, _ []string) {
-		// Setup all the required dependencies
+	PreRun: func(cmd *cobra.Command, _ []string) {
 		setUpConfig()
 		setUpLogger()
-
+	},
+	Run: func(_ *cobra.Command, _ []string) {
 		printScheduleList()
-
 	},
 }
 

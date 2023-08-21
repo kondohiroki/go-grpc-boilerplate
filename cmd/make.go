@@ -25,11 +25,11 @@ var makeMigrationCommand = &cobra.Command{
 	Use:     "make:migration",
 	Short:   "Create a new migration file",
 	GroupID: "make",
-	Run: func(cmd *cobra.Command, _ []string) {
-		// Setup all the required dependencies
+	PreRun: func(cmd *cobra.Command, _ []string) {
 		setUpConfig()
 		setUpLogger()
-
+	},
+	Run: func(cmd *cobra.Command, _ []string) {
 		migrationFileName, _ := cmd.Flags().GetString("name")
 
 		template := "pkg/template/migration_file.txt"

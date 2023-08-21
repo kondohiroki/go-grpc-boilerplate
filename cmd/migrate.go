@@ -31,12 +31,12 @@ var migrateCommand = &cobra.Command{
 	Use:     "migrate",
 	Short:   "Migrate database",
 	GroupID: "migrate",
-	Run: func(_ *cobra.Command, _ []string) {
-		// Setup all the required dependencies
+	PreRun: func(cmd *cobra.Command, _ []string) {
 		setUpConfig()
 		setUpLogger()
 		setUpPostgres()
-
+	},
+	Run: func(_ *cobra.Command, _ []string) {
 		if len(migrations.Migrations) == 0 {
 			logger.Log.Info("No migrations found")
 			os.Exit(0)
@@ -116,12 +116,12 @@ var migrateDownCommand = &cobra.Command{
 	Use:     "migrate:down",
 	Short:   "Rollback database migration",
 	GroupID: "migrate",
-	Run: func(cmd *cobra.Command, _ []string) {
-		// Setup all the required dependencies
+	PreRun: func(cmd *cobra.Command, _ []string) {
 		setUpConfig()
 		setUpLogger()
 		setUpPostgres()
-
+	},
+	Run: func(cmd *cobra.Command, _ []string) {
 		if len(migrations.Migrations) == 0 {
 			logger.Log.Info("No migrations found")
 			os.Exit(0)
@@ -199,12 +199,12 @@ var migrateFlushCommand = &cobra.Command{
 	Use:     "migrate:flush",
 	Short:   "Drop all tables in schema",
 	GroupID: "migrate",
-	Run: func(_ *cobra.Command, _ []string) {
-		// Setup all the required dependencies
+	PreRun: func(cmd *cobra.Command, _ []string) {
 		setUpConfig()
 		setUpLogger()
 		setUpPostgres()
-
+	},
+	Run: func(_ *cobra.Command, _ []string) {
 		// Initiate context
 		ctx := context.Background()
 
@@ -237,12 +237,12 @@ var migrateStatusCommand = &cobra.Command{
 	Use:     "migrate:status",
 	Short:   "Display the status of database migrations",
 	GroupID: "migrate",
-	Run: func(cmd *cobra.Command, _ []string) {
-		// Setup all the required dependencies
+	PreRun: func(cmd *cobra.Command, _ []string) {
 		setUpConfig()
 		setUpLogger()
 		setUpPostgres()
-
+	},
+	Run: func(cmd *cobra.Command, _ []string) {
 		if len(migrations.Migrations) == 0 {
 			logger.Log.Info("No migrations found")
 			os.Exit(0)

@@ -1,6 +1,3 @@
-# If you prefer the allow list template instead of the deny list, see community template:
-# https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
-#
 # Binaries for programs and plugins
 *.exe
 *.exe~
@@ -17,5 +14,28 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
-# Go workspace file
-go.work
+config/config.yaml
+
+.DS_Store
+
+log/*.log
+log/*.json
+log.json
+
+tmp/
+
+.env
+
+*-coverage*
+
+*coverage.html
+
+.scannerwork
+.sonar.secret
+.history/
+
+export_data_*
+
+.idea
+__debug_bin
+__debug_bin

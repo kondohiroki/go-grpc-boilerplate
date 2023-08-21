@@ -19,15 +19,15 @@ type Server struct {
 	// Add more services here
 }
 
-func (s *Server) RegisterWithServer(sv *grpc.Server) {
+func (s *Server) registerWithServer(sv *grpc.Server) {
 	pb.RegisterUsersServer(sv, s)
 
 	// Register more services here
 }
 
-func NewGRPCServer() (*grpc.Server, error) {
-	// Register interceptors here
-	opts := []grpc.ServerOption{
+// Register interceptors (i.e. middleware) here
+func initOptions() []grpc.ServerOption {
+	return []grpc.ServerOption{
 		grpc.ChainUnaryInterceptor(
 			recovery.UnaryServerInterceptor(recovery.WithRecoveryHandler(grpcPanicRecoveryHandler)),
 		),
@@ -35,6 +35,11 @@ func NewGRPCServer() (*grpc.Server, error) {
 			recovery.StreamServerInterceptor(recovery.WithRecoveryHandler(grpcPanicRecoveryHandler)),
 		),
 	}
+}
+
+func NewGRPCServer() (*grpc.Server, error) {
+	// Register interceptors here
+	opts := initOptions()
 
 	// Create a new gRPC server with the interceptors
 	s := grpc.NewServer(opts...)
@@ -44,7 +49,7 @@ func NewGRPCServer() (*grpc.Server, error) {
 
 	// Initialize and register the combined gRPC server struct
 	serverInstance := &Server{}
-	serverInstance.RegisterWithServer(s)
+	serverInstance.registerWithServer(s)
 
 	// Register the reflection service on gRPC server.
 	reflection.Register(s)
