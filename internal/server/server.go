@@ -4,7 +4,9 @@ import (
 	"fmt"
 
 	"github.com/kondohiroki/go-grpc-boilerplate/config"
+	"github.com/kondohiroki/go-grpc-boilerplate/internal/app"
 	"github.com/kondohiroki/go-grpc-boilerplate/internal/logger"
+	"github.com/kondohiroki/go-grpc-boilerplate/internal/repository"
 	"github.com/kondohiroki/go-grpc-boilerplate/pkg/middleware"
 	pb "github.com/kondohiroki/go-grpc-boilerplate/proto"
 	"google.golang.org/grpc"
@@ -16,8 +18,10 @@ import (
 
 type Server struct {
 	pb.UserServiceServer
-
 	// Add more services here
+
+	// Add more dependencies here
+	app app.App
 }
 
 func (s *Server) registerWithServer(sv *grpc.Server) {
@@ -72,8 +76,13 @@ func NewGRPCServer() (*grpc.Server, error) {
 	// Create a new gRPC server with the interceptors
 	s := grpc.NewServer(opts...)
 
+	// Initialize the application layer (i.e. business logic)
+	appInstance := app.NewApp(repository.NewRepository())
+
 	// Initialize and register the combined gRPC server struct
-	serverInstance := &Server{}
+	serverInstance := &Server{
+		app: appInstance,
+	}
 	serverInstance.registerWithServer(s)
 
 	// Register health check service
