@@ -99,18 +99,4 @@ var (
 		SUBCODE_AUTH_CORE_ERROR,
 		"could not authenticate",
 	)
-
-	// DatasourceError
-	ResponseFieldNotFoundError *ExceptionErrors = createFixedExceptionErrors(
-		http.StatusInternalServerError,
-		ERROR_TYPE_DATASOURCE_ERROR,
-		SUBCODE_RESPONSE_FIELD_NOT_FOUND_ERROR,
-		"result field not found",
-	)
-	RequiredFieldNotFoundError *ExceptionErrors = createFixedExceptionErrors(
-		http.StatusInternalServerError,
-		ERROR_TYPE_DATASOURCE_ERROR,
-		SUBCODE_REQUIRED_FIELD_NOT_FOUND_ERROR,
-		"required field not found",
-	)
 )
