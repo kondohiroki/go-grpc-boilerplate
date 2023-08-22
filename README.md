@@ -57,7 +57,7 @@
     # Add secret to .sonar.secret
     # Get from sonar web
     ```
-### Protof
+### Protobuf
 1. Install protobuf compiler
     ```sh
     brew install protobuf
@@ -79,4 +79,36 @@
 5. Make sure all dependencies are installed
     ```sh
     go mod tidy
+    ```
+
+## Before commit
+1. Please correct your git username and email
+    ```sh
+    git config user.name "John Doe"
+    git config user.email "john@email.com"
+    ```
+2. Please squash&rebase your commits
+    ```sh
+    # Make sure that base branch is up-to-date
+    git checkout main
+    git fetch
+    git pull
+
+    # Back to your branch
+    git checkout <your-feature-branch>
+
+    # =====> SQUASH <=====
+    git reset $(git merge-base origin/main $(git branch --show-current))
+    git add -A
+    git commit -m "[ISSUE-ID] Add auth api configuration"
+    git push -f
+
+    # =====> REBASE <=====
+    git rebase origin/main
+
+    # After resolving conflicts, continue the rebase process
+    git rebase --continue
+
+    # Force-push the rebased feature branch to the remote repository
+    git push -f
     ```
