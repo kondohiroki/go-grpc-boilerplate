@@ -35,7 +35,7 @@ func initOptions() []grpc.ServerOption {
 		grpc.MaxSendMsgSize(maxSendSize),
 		grpc.MaxRecvMsgSize(maxRecvSize),
 
-		// Register interceptors here
+		// Register interceptors(i.e. middleware) here
 		grpc.ChainUnaryInterceptor(
 			middleware.UnaryRequestIDInterceptor,
 			middleware.UnaryLoggingInterceptor(logger.Log),
