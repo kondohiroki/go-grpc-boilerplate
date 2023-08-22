@@ -48,7 +48,7 @@ func (s *exampleService) authenticate(ctx context.Context) (string, error) {
 
 	// read response and its result
 	resp := &response.CommonResponse{}
-	if err := transport.RequestAndParseJSONBody(ctx, req, resp); err != nil {
+	if _, _, err := transport.RequestAutoBodyParser(ctx, req, resp); err != nil {
 		logger.Log.Error("could not request and parse JSON body from auth because: %v", zap.Error(err))
 		return "", exception.AuthCoreError
 	}

@@ -142,33 +142,6 @@ func MakeHTTPRequest(ctx context.Context, req HttpRequest) (*http.Response, erro
 	}
 }
 
-// RequestAndParseBody calls MakeHTTPRequest then read response body
-// and unmarshal to result pointer.
-func RequestAndParseJSONBody(ctx context.Context, req HttpRequest, result interface{}) error {
-	resp, err := MakeHTTPRequest(ctx, req)
-	if err != nil {
-		return err
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	logger.Log.Debug(fmt.Sprintf("response body from %s is %s", req.Url, body))
-
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return errors.New("unexpected status: " + resp.Status)
-	}
-
-	if err := sonic.Unmarshal(body, result); err != nil {
-		return err
-	}
-
-	return err
-}
-
 // The function makes an HTTP request and automatically parses the response body into either a success
 // or error object based on the HTTP status code.
 // if it has error response, then you can handle it with errorBody
