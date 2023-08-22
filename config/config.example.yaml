@@ -5,12 +5,12 @@ app:
 
 grpcServer:
   port: 50051
-  reflection: true # enable reflection for grpcui
+  useReflection: true # enable reflection for grpcui
   maxSendMsgSize: 10 # in MB
   maxRecvMsgSize: 10 # in MB
   useTls: false
-  tlsCertFile: "certs/server.crt"
-  tlsKeyFile: "certs/server.key"
+  tlsCertFile: "script/ssl/server.crt"
+  tlsKeyFile: "script/ssl/server.pem"
 
 log:
   level: "debug"

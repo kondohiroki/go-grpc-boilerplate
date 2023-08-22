@@ -31,6 +31,7 @@ func addCommonHeaders(requestID string) metadata.MD {
 	)
 }
 
+// UnaryRequestIDInterceptor is a gRPC server-side interceptor that adds the request ID to the context.
 func UnaryRequestIDInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 	md, _ := metadata.FromIncomingContext(ctx)
 	requestIDs, ok := md["x-request-id"]
@@ -66,6 +67,7 @@ func WrapServerStream(ss grpc.ServerStream) *WrappedServerStream {
 	return &WrappedServerStream{ServerStream: ss, WrappedContext: ss.Context()}
 }
 
+// StreamRequestIDInterceptor is a gRPC server-side interceptor that adds the request ID to the context.
 func StreamRequestIDInterceptor(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 	ctx := ss.Context()
 
@@ -88,6 +90,7 @@ func StreamRequestIDInterceptor(srv interface{}, ss grpc.ServerStream, info *grp
 	return handler(srv, wrappedStream)
 }
 
+// StreamClientRequestIDInterceptor is a gRPC client-side interceptor that adds the request ID to the outgoing context.
 func StreamClientRequestIDInterceptor(ctx context.Context, desc *grpc.StreamDesc, cc *grpc.ClientConn, method string, streamer grpc.Streamer, opts ...grpc.CallOption) (grpc.ClientStream, error) {
 	requestID := uuid.New().String() // Generate a new ID
 	md := metadata.Pairs("x-request-id", requestID)

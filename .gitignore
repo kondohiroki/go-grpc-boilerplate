@@ -40,3 +40,9 @@ export_data_*
 .idea
 __debug_bin
 __debug_bin
+
+## SSL
+*.crt
+*.key
+*.csr
+*.pem

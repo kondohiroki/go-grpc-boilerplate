@@ -32,10 +32,11 @@ var serveGRPCAPICmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Create gRPC server
-		gRPCServer, err := server.NewGRPCServer()
+		s, err := server.NewGRPCServer()
 		if err != nil {
 			return fmt.Errorf("failed to create gRPC server: %w", err)
 		}
+		defer s.Stop()
 
 		// Create validator instance
 		validation.InitValidator()
@@ -48,6 +49,7 @@ var serveGRPCAPICmd = &cobra.Command{
 		if err != nil {
 			return fmt.Errorf("failed to listen: %w", err)
 		}
+		defer lis.Close()
 
 		ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 		defer stop()
@@ -60,7 +62,7 @@ var serveGRPCAPICmd = &cobra.Command{
 			logger.Log.Info("waiting for requests...")
 
 			// Start gRPC server
-			if err := gRPCServer.Serve(lis); err != nil && err != grpc.ErrServerStopped {
+			if err := s.Serve(lis); err != nil && err != grpc.ErrServerStopped {
 				logger.Log.Fatal(fmt.Sprintf("failed to serve: %s\n", err))
 			}
 		}()
@@ -70,7 +72,7 @@ var serveGRPCAPICmd = &cobra.Command{
 		logger.Log.Info("\nShutting down gracefully, press Ctrl+C again to force")
 
 		// Gracefully stop the gRPC server
-		gRPCServer.GracefulStop()
+		s.GracefulStop()
 
 		return nil
 	},
