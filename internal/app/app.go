@@ -6,6 +6,8 @@ import (
 	"github.com/kondohiroki/go-grpc-boilerplate/internal/repository"
 )
 
+// App is a business logic layer.
+// It is used to separate the business logic layer from the interface layer.
 type App interface {
 	GetUsers(ctx context.Context) ([]GetUserDTO, error)
 	GetUserByID(ctx context.Context, input GetUserDTI) (GetUserDTO, error)
