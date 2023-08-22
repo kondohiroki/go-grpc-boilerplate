@@ -2,7 +2,6 @@ package repository
 
 import (
 	"github.com/kondohiroki/go-grpc-boilerplate/internal/db/pgx"
-	"github.com/kondohiroki/go-grpc-boilerplate/internal/db/rdb"
 )
 
 type Repository struct {
@@ -11,11 +10,11 @@ type Repository struct {
 }
 
 func NewRepository() *Repository {
-	pgxPool := pgx.GetPgxPool()
-	redisClient := rdb.GetRedisClient()
+	readPgxPool := pgx.GetReadPgxPool()
+	writePgxPool := pgx.GetWritePgxPool()
 
 	return &Repository{
-		User: NewUserRepository(pgxPool, redisClient),
-		Job:  NewJobRepository(pgxPool),
+		User: NewUserRepository(readPgxPool, writePgxPool),
+		Job:  NewJobRepository(readPgxPool, writePgxPool),
 	}
 }

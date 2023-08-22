@@ -8,7 +8,6 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/kondohiroki/go-grpc-boilerplate/internal/db/model"
 	"github.com/kondohiroki/go-grpc-boilerplate/pkg/cache"
-	"github.com/redis/go-redis/v9"
 )
 
 type UserRepository interface {
@@ -18,14 +17,14 @@ type UserRepository interface {
 }
 
 type UserRepositoryImpl struct {
-	pgxPool     *pgxpool.Pool
-	redisClient redis.Cmdable
+	readPgxPool  *pgxpool.Pool
+	writePgxPool *pgxpool.Pool
 }
 
-func NewUserRepository(pgxPool *pgxpool.Pool, redisClient redis.Cmdable) UserRepository {
+func NewUserRepository(readPgxPool *pgxpool.Pool, writePgxPool *pgxpool.Pool) UserRepository {
 	return &UserRepositoryImpl{
-		pgxPool:     pgxPool,
-		redisClient: redisClient,
+		readPgxPool:  readPgxPool,
+		writePgxPool: writePgxPool,
 	}
 }
 
@@ -34,7 +33,7 @@ func (u *UserRepositoryImpl) GetUsers(ctx context.Context) ([]model.User, error)
 
 	data, err := cache.Remember(ctx, key, 10*time.Minute, func() ([]byte, error) {
 		var users []model.User
-		rows, err := u.pgxPool.Query(ctx, "SELECT id, name, email FROM users")
+		rows, err := u.readPgxPool.Query(ctx, "SELECT id, name, email FROM users")
 		if err != nil {
 			return nil, err
 		}
@@ -76,7 +75,7 @@ func (u *UserRepositoryImpl) GetUsers(ctx context.Context) ([]model.User, error)
 //cov:ignore
 func (u *UserRepositoryImpl) GetUsersWithPagination(ctx context.Context, limit int, offset int) ([]model.User, error) {
 	var users []model.User
-	rows, err := u.pgxPool.Query(ctx, "SELECT id, name, email FROM users LIMIT $1 OFFSET $2", limit, offset)
+	rows, err := u.readPgxPool.Query(ctx, "SELECT id, name, email FROM users LIMIT $1 OFFSET $2", limit, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +93,7 @@ func (u *UserRepositoryImpl) GetUsersWithPagination(ctx context.Context, limit i
 
 // Add user with transaction and return id
 func (u *UserRepositoryImpl) AddUser(ctx context.Context, user model.User) (id int, err error) {
-	tx, err := u.pgxPool.Begin(ctx)
+	tx, err := u.writePgxPool.Begin(ctx)
 	if err != nil {
 		return 0, err
 	}
@@ -118,7 +117,7 @@ func (u *UserRepositoryImpl) AddUser(ctx context.Context, user model.User) (id i
 
 func (u *UserRepositoryImpl) IsUserEmailExist(ctx context.Context, email string) (bool, error) {
 	var count int
-	err := u.pgxPool.QueryRow(ctx, "SELECT COUNT(*) FROM users WHERE email = $1", email).Scan(&count)
+	err := u.readPgxPool.QueryRow(ctx, "SELECT COUNT(*) FROM users WHERE email = $1", email).Scan(&count)
 	if err != nil {
 		return false, err
 	}

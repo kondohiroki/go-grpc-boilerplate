@@ -57,30 +57,33 @@ func setUpLogger() {
 }
 
 func setUpPostgres() {
-	// Create the database connection pool
-	if config.GetConfig().Postgres.Host != "" {
-		if config.GetConfig().Postgres.Schema == "" {
-			logger.Log.Fatal("Postgres schema is not set")
+	postgresConfig := config.GetConfig().Postgres
+
+	// Check if either Read or Write host is provided
+	if postgresConfig.Read.Host != "" || postgresConfig.Write.Host != "" {
+		// Ensure both Read and Write hosts are provided
+		if postgresConfig.Read.Schema == "" || postgresConfig.Write.Schema == "" {
+			logger.Log.Fatal("Both Read and Write schema must be set for Postgres")
 		}
 
 		// Initialize database schema if it doesn't exist
 		ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 		defer cancel()
 
-		logger.Log.Info("Initializing database schema", zap.String("schema", config.GetConfig().Postgres.Schema))
-		err := pgx.InitSchema(ctx, config.GetConfig().Postgres, config.GetConfig().Postgres.Schema)
+		logger.Log.Info(fmt.Sprintf("Initializing schema: %s", postgresConfig.Write.Schema))
+		err := pgx.InitSchema(ctx, postgresConfig.Write, postgresConfig.Write.Schema)
 		if err != nil {
-			logger.Log.Fatal("pgx.InitSchema()", zap.Error(err))
+			logger.Log.Fatal("Failed in pgx.InitSchema()", zap.Error(err))
 		}
 
+		// Initialize the connection pool
 		logger.Log.Info("Initializing pgxPool")
-		err = pgx.InitPgConnectionPool(config.GetConfig().Postgres)
+		err = pgx.InitPgConnectionPool(postgresConfig)
 		if err != nil {
-			logger.Log.Fatal("pgx.InitPgConnectionPool()", zap.Error(err))
+			logger.Log.Fatal("Failed in pgx.InitPgConnectionPool()", zap.Error(err))
 		}
 		logger.Log.Info("pgxPool initialized")
 	}
-
 }
 
 func setUpRedis() {

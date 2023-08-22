@@ -13,7 +13,7 @@ func init() {
 var createJobQueueTable = &Migration{
 	Name: "20230426164555_create_job_queue_table",
 	Up: func() error {
-		_, err := pgx.GetPgxPool().Exec(context.Background(), `
+		_, err := pgx.GetWritePgxPool().Exec(context.Background(), `
 		CREATE TABLE IF NOT EXISTS jobs (
 			"id" UUID PRIMARY KEY,
 			"queue" VARCHAR(255),
@@ -50,7 +50,7 @@ var createJobQueueTable = &Migration{
 
 	},
 	Down: func() error {
-		_, err := pgx.GetPgxPool().Exec(context.Background(), `
+		_, err := pgx.GetWritePgxPool().Exec(context.Background(), `
 			DROP TABLE IF EXISTS failed_jobs;
 			DROP TABLE IF EXISTS jobs;
 		`)

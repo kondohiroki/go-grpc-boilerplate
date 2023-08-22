@@ -46,7 +46,7 @@ var migrateCommand = &cobra.Command{
 		ctx := context.Background()
 
 		// Get database connection
-		dbConn := pgx.GetPgxPool()
+		dbConn := pgx.GetWritePgxPool()
 
 		if dbConn == nil {
 			logger.Log.Error("Database connection is nil")
@@ -131,7 +131,7 @@ var migrateDownCommand = &cobra.Command{
 		ctx := context.Background()
 
 		// Get database connection
-		dbConn := pgx.GetPgxPool()
+		dbConn := pgx.GetWritePgxPool()
 
 		if dbConn == nil {
 			logger.Log.Error("Database connection is nil")
@@ -209,7 +209,7 @@ var migrateFlushCommand = &cobra.Command{
 		ctx := context.Background()
 
 		// Get database connection
-		dbConn := pgx.GetPgxPool()
+		dbConn := pgx.GetWritePgxPool()
 
 		if dbConn == nil {
 			logger.Log.Error("Database connection is nil")
@@ -221,7 +221,7 @@ var migrateFlushCommand = &cobra.Command{
 			ctx,
 			fmt.Sprintf(
 				`DROP SCHEMA IF EXISTS %s CASCADE`,
-				config.GetConfig().Postgres.Schema,
+				config.GetConfig().Postgres.Write.Schema,
 			),
 		)
 		if err != nil {
@@ -229,7 +229,7 @@ var migrateFlushCommand = &cobra.Command{
 			return
 		}
 
-		logger.Log.Info("Dropped all tables in schema " + config.GetConfig().Postgres.Schema + " successfully")
+		logger.Log.Info("Dropped all tables in schema " + config.GetConfig().Postgres.Write.Schema + " successfully")
 	},
 }
 
@@ -252,7 +252,7 @@ var migrateStatusCommand = &cobra.Command{
 		ctx := context.Background()
 
 		// Get database connection
-		dbConn := pgx.GetPgxPool()
+		dbConn := pgx.GetWritePgxPool()
 
 		if dbConn == nil {
 			logger.Log.Error("Database connection is nil")

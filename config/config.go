@@ -54,6 +54,11 @@ type App struct {
 }
 
 type Postgres struct {
+	Read  PostgresConfig `yaml:"read"`
+	Write PostgresConfig `yaml:"write"`
+}
+
+type PostgresConfig struct {
 	Host            string `yaml:"host"`
 	Port            int    `yaml:"port"`
 	Username        string `yaml:"username"`

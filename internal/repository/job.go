@@ -22,17 +22,19 @@ type JobRepository interface {
 }
 
 type JobRepositoryImpl struct {
-	pgxPool *pgxpool.Pool
+	readPgxPool  *pgxpool.Pool
+	writePgxPool *pgxpool.Pool
 }
 
-func NewJobRepository(pgxPool *pgxpool.Pool) JobRepository {
+func NewJobRepository(readPgxPool *pgxpool.Pool, writePgxPool *pgxpool.Pool) JobRepository {
 	return &JobRepositoryImpl{
-		pgxPool: pgxPool,
+		readPgxPool:  readPgxPool,
+		writePgxPool: writePgxPool,
 	}
 }
 
 func (j *JobRepositoryImpl) AddJob(ctx context.Context, job model.Job) (jobID uuid.UUID, err error) {
-	tx, err := j.pgxPool.Begin(ctx)
+	tx, err := j.writePgxPool.Begin(ctx)
 	if err != nil {
 		return uuid.Nil, err
 	}
@@ -56,7 +58,7 @@ func (j *JobRepositoryImpl) AddJob(ctx context.Context, job model.Job) (jobID uu
 }
 
 func (j *JobRepositoryImpl) AddFailedJob(ctx context.Context, job model.FaildJob) (failedJobID int, err error) {
-	tx, err := j.pgxPool.Begin(ctx)
+	tx, err := j.writePgxPool.Begin(ctx)
 	if err != nil {
 		return failedJobID, err
 	}
@@ -80,7 +82,7 @@ func (j *JobRepositoryImpl) AddFailedJob(ctx context.Context, job model.FaildJob
 }
 
 func (j *JobRepositoryImpl) UpdateJobStatus(ctx context.Context, jobID uuid.UUID, status string) error {
-	tx, err := j.pgxPool.Begin(ctx)
+	tx, err := j.writePgxPool.Begin(ctx)
 	if err != nil {
 		return err
 	}
@@ -102,7 +104,7 @@ func (j *JobRepositoryImpl) UpdateJobStatus(ctx context.Context, jobID uuid.UUID
 }
 
 func (j *JobRepositoryImpl) ResetProcessingJobsToPending(ctx context.Context) error {
-	tx, err := j.pgxPool.Begin(ctx)
+	tx, err := j.writePgxPool.Begin(ctx)
 	if err != nil {
 		return err
 	}
@@ -138,7 +140,7 @@ func handleSelectJob(rows pgx.Rows) ([]model.Job, error) {
 }
 
 func (j *JobRepositoryImpl) GetJobs(ctx context.Context) ([]model.Job, error) {
-	rows, err := j.pgxPool.Query(ctx, `
+	rows, err := j.readPgxPool.Query(ctx, `
 		SELECT id, queue, handler_name, payload, max_attempts, delay, status, created_at, updated_at FROM jobs
 	`)
 	if err != nil {
@@ -152,7 +154,7 @@ func (j *JobRepositoryImpl) GetJobs(ctx context.Context) ([]model.Job, error) {
 }
 
 func (j *JobRepositoryImpl) GetUnfinishedJobs(ctx context.Context) ([]model.Job, error) {
-	rows, err := j.pgxPool.Query(ctx, `
+	rows, err := j.readPgxPool.Query(ctx, `
 		SELECT id, queue, handler_name, payload, max_attempts, delay, status, created_at, updated_at FROM jobs WHERE status != 'completed' ORDER BY created_at ASC
 	`)
 	if err != nil {
@@ -166,7 +168,7 @@ func (j *JobRepositoryImpl) GetUnfinishedJobs(ctx context.Context) ([]model.Job,
 }
 
 func (j *JobRepositoryImpl) GetFailedJobs(ctx context.Context) ([]model.FaildJob, error) {
-	rows, err := j.pgxPool.Query(ctx, `
+	rows, err := j.readPgxPool.Query(ctx, `
 		SELECT id, job_id, queue, payload, error, failed_at FROM failed_jobs ORDER BY failed_at ASC
 	`)
 	if err != nil {
@@ -188,7 +190,7 @@ func (j *JobRepositoryImpl) GetFailedJobs(ctx context.Context) ([]model.FaildJob
 }
 
 func (j *JobRepositoryImpl) RemoveFailedJob(ctx context.Context, jobID uuid.UUID) error {
-	tx, err := j.pgxPool.Begin(ctx)
+	tx, err := j.writePgxPool.Begin(ctx)
 	if err != nil {
 		return err
 	}

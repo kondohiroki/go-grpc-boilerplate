@@ -12,19 +12,80 @@ import (
 	"go.uber.org/zap"
 )
 
-var pgxPool *pgxpool.Pool
-var m sync.Mutex
+var (
+	readPgxPool  *pgxpool.Pool
+	writePgxPool *pgxpool.Pool
+	m            sync.Mutex
+)
 
-// Initialize the database connection pgxPool.
-func InitPgConnectionPool(postgresConfig config.Postgres) error {
+func InitPgConnectionPool(cfg config.Postgres) error {
+	// If no read config is provided
+	// OR both configs point to the same host,
+	// use a single connection pool.
+	if cfg.Read.Host == "" || cfg.Read.Host == cfg.Write.Host {
+		singlePool, err := initSinglePool(cfg.Write)
+		if err != nil {
+			return err
+		}
+
+		readPgxPool = singlePool
+		writePgxPool = singlePool
+		return nil
+	}
+
+	// For distinct read/write databases
+	readPool, err := initSinglePool(cfg.Read)
+	if err != nil {
+		return err
+	}
+	writePool, err := initSinglePool(cfg.Write)
+	if err != nil {
+		return err
+	}
+
+	readPgxPool = readPool
+	writePgxPool = writePool
+	return nil
+}
+
+func GetReadPgxPool() *pgxpool.Pool {
 	m.Lock()
 	defer m.Unlock()
 
-	if pgxPool != nil {
-		return nil // The connection pgxPool has already been initialized
+	if readPgxPool == nil {
+		logger.Log.Info("Initializing readPgxPool again")
+		var err error
+		readPgxPool, err = initSinglePool(config.GetConfig().Postgres.Read)
+		if err != nil {
+			logger.Log.Error("Failed to initialize readPgxPool", zap.Error(err))
+			return nil // added return to avoid using an uninitialized pool
+		}
+		logger.Log.Info("readPgxPool initialized")
 	}
+	return readPgxPool
+}
 
-	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable search_path=%s",
+func GetWritePgxPool() *pgxpool.Pool {
+	m.Lock()
+	defer m.Unlock()
+
+	if writePgxPool == nil {
+		logger.Log.Info("Initializing writePgxPool again")
+		var err error
+		writePgxPool, err = initSinglePool(config.GetConfig().Postgres.Write)
+		if err != nil {
+			logger.Log.Error("Failed to initialize writePgxPool", zap.Error(err))
+			return nil // added return to avoid using an uninitialized pool
+		}
+		logger.Log.Info("writePgxPool initialized")
+	}
+	return writePgxPool
+}
+
+// initSinglePool initializes a single pool without acquiring a lock
+func initSinglePool(postgresConfig config.PostgresConfig) (*pgxpool.Pool, error) {
+	connStr := fmt.Sprintf(
+		"host=%s port=%d user=%s password=%s dbname=%s sslmode=disable search_path=%s",
 		postgresConfig.Host,
 		postgresConfig.Port,
 		postgresConfig.Username,
@@ -36,50 +97,20 @@ func InitPgConnectionPool(postgresConfig config.Postgres) error {
 	connConfig, err := pgxpool.ParseConfig(connStr)
 	if err != nil {
 		fmt.Println("Failed to parse config:", err)
-		return err
+		return nil, err
 	}
 
 	// Set maximum number of connections
 	connConfig.MaxConns = postgresConfig.MaxConnections
-	// connConfig.MaxConnIdleTime = time.Duration(postgresConfig.MaxConnIdleTime) * time.Minute
 
-	pgxPool, err = pgxpool.NewWithConfig(context.Background(), connConfig)
-
+	pgxPool, err := pgxpool.NewWithConfig(context.Background(), connConfig)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return pgxPool, nil
 }
 
-func GetPgxPool() *pgxpool.Pool {
-	if pgxPool == nil {
-		m.Lock()
-		defer m.Unlock()
-
-		logger.Log.Info("Initializing pgxPool again")
-		err := InitPgConnectionPool(config.GetConfig().Postgres)
-		if err != nil {
-			logger.Log.Error("Failed to initialize pgxPool", zap.Error(err))
-		}
-		logger.Log.Info("pgxPool initialized")
-	}
-
-	return pgxPool
-}
-
-func GetPgxConn() *pgxpool.Conn {
-	pgxPool := GetPgxPool()
-
-	conn, err := pgxPool.Acquire(context.Background())
-	if err != nil {
-		logger.Log.Error("Failed to acquire pgxPool connection", zap.Error(err))
-		return nil
-	}
-
-	return conn
-}
-
-func InitSchema(ctx context.Context, postgresConfig config.Postgres, schema string) (err error) {
+func InitSchema(ctx context.Context, postgresConfig config.PostgresConfig, schema string) (err error) {
 	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		postgresConfig.Host,
 		postgresConfig.Port,
@@ -113,12 +144,21 @@ func InitSchema(ctx context.Context, postgresConfig config.Postgres, schema stri
 	return nil
 }
 
-// Close the database connection pgxPool.
 func ClosePgxPool() {
 	m.Lock()
 	defer m.Unlock()
 
-	if pgxPool != nil {
-		pgxPool.Close()
+	if readPgxPool != nil {
+		logger.Log.Info("Closing readPgxPool")
+		readPgxPool.Close()
+		readPgxPool = nil
 	}
+
+	if writePgxPool != nil {
+		logger.Log.Info("Closing writePgxPool")
+		writePgxPool.Close()
+		writePgxPool = nil
+	}
+
+	logger.Log.Info("Connection pools closed")
 }
