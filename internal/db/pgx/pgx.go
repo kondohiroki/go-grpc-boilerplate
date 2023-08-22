@@ -19,6 +19,9 @@ var (
 )
 
 func InitPgConnectionPool(cfg config.Postgres) error {
+	m.Lock()
+	defer m.Unlock()
+
 	// If no read config is provided
 	// OR both configs point to the same host,
 	// use a single connection pool.
@@ -149,16 +152,16 @@ func ClosePgxPool() {
 	defer m.Unlock()
 
 	if readPgxPool != nil {
-		logger.Log.Info("Closing readPgxPool")
+		fmt.Println("Closing readPgxPool")
 		readPgxPool.Close()
 		readPgxPool = nil
+		fmt.Println("readPgxPool closed")
 	}
 
 	if writePgxPool != nil {
-		logger.Log.Info("Closing writePgxPool")
+		fmt.Println("Closing writePgxPool")
 		writePgxPool.Close()
 		writePgxPool = nil
+		fmt.Println("writePgxPool closed")
 	}
-
-	logger.Log.Info("Connection pools closed")
 }

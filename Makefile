@@ -103,14 +103,14 @@ lint: ## Run golint
 	$(GOPATH)/bin/golint ./...
 
 
-gen-proto: ## Generate protobuf files
+pb: ## Generate protobuf files
 	protoc -I proto/ proto/*.proto \
 	--go_out=proto \
 	--go-grpc_out=proto \
 	--go_opt=paths=source_relative \
 	--go-grpc_opt=paths=source_relative
 
-pb: ## Generate protobuf files with module
+pb-with-module: ## Generate protobuf files with module
 	protoc -I proto proto/*.proto \
 	--go_out=proto \
 	--go_opt=module=${PACKAGE} \
