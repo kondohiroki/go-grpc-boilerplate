@@ -10,6 +10,4 @@ const (
 	ERROR_TYPE_VALIDATION_ERROR       errorType = "ValidationError"
 	ERROR_TYPE_JOB_ERROR              errorType = "JobError"
 	ERROR_TYPE_EXTERNAL_SERVICE_ERROR errorType = "ExternalServiceError"
-	ERROR_TYPE_DATASOURCE_ERROR       errorType = "DatasourceError"
-	ERROR_TYPE_LOAN_APPLICATION_ERROR errorType = "LoanApplicationError"
 )

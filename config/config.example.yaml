@@ -14,10 +14,10 @@ grpcServer:
 
 log:
   level: "debug"
-  stacktraceLevel: "error" # debug, info, warn, error, dpanic, panic, fatal
+  stacktraceLevel: "error" # debug, info, warn, error, panic, fatal
   fileEnabled: false
   fileSize: 10 # MB
-  filePath: "log/log.log"
+  filePath: "storage/log/log.log"
   fileCompress: false # enable log file compress before rotate
   maxAge: 1 # days to keep log files
   maxBackups: 10 # umber of log files

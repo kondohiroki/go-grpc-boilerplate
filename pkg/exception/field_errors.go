@@ -1,7 +1,6 @@
 package exception
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
@@ -33,34 +32,5 @@ func (cErrs *ExceptionErrors) IsEmpty() bool {
 // Append manually appends error item to current errors.
 func (cErrs *ExceptionErrors) Append(cErr *ExceptionError) *ExceptionErrors {
 	cErrs.ErrItems = append(cErrs.ErrItems, cErr)
-	return cErrs
-}
-
-// Datasource Errors
-
-func (cErrs *ExceptionErrors) AppendInputFieldIsNotConfigured(fieldName, productName string) *ExceptionErrors {
-	cErrs.ErrItems = append(cErrs.ErrItems, &ExceptionError{
-		Message:      fmt.Sprintf("input field: %s of product_name: %s is not configured", fieldName, productName),
-		Type:         ERROR_TYPE_DATASOURCE_ERROR,
-		ErrorSubcode: SUBCODE_INPUT_FIELD_IS_NOT_CONFIGURED,
-	})
-	return cErrs
-}
-
-func (cErrs *ExceptionErrors) AppendInvalidFieldValuesLength() *ExceptionErrors {
-	cErrs.ErrItems = append(cErrs.ErrItems, &ExceptionError{
-		Message:      "length of field values must be the same for every input fields",
-		Type:         ERROR_TYPE_DATASOURCE_ERROR,
-		ErrorSubcode: SUBCODE_NUM_MULTIPLE_VALUES_ERROR,
-	})
-	return cErrs
-}
-
-func (cErrs *ExceptionErrors) AppendInvalidFieldValue(fieldName, fieldValue string) *ExceptionErrors {
-	cErrs.ErrItems = append(cErrs.ErrItems, &ExceptionError{
-		Message:      fmt.Sprintf("invalid format value: %s of field: %s", fieldValue, fieldName),
-		Type:         ERROR_TYPE_DATASOURCE_ERROR,
-		ErrorSubcode: SUBCODE_INVALID_FIELD_VALUE_FORMAT,
-	})
 	return cErrs
 }
