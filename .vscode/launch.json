@@ -1,0 +1,45 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "serve:grpc-api",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceRoot}",
+            "args": [
+                "serve:grpc-api"
+            ]
+        },
+        {
+            "name": "queue:work",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceRoot}",
+            "args": [
+                "queue:work"
+            ]
+        },
+        {
+            "name": "schedule:run",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceRoot}",
+            "args": [
+                "schedule:run"
+            ]
+        },
+        {
+            "name": "migrate",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceRoot}",
+            "args": [
+                "migrate"
+            ]
+        },
+    ]
+}
